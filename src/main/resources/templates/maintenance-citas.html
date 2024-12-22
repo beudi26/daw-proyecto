@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Mantenimiento de Citas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <style>
+        /* Estilos CSS */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+
+        /* Estilo del navbar */
+        nav {
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px 0;
+            display: flex;
+            justify-content: center; /* Esto centra los elementos dentro del navbar */
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            margin: 0 10px;
+            display: inline-block;
+        }
+
+        nav a:hover {
+            background-color: #3b99ff;
+            border-radius: 5px;
+        }
+
+        /* Contenedor principal */
+        .container {
+            padding: 20px;
+        }
+
+        .button-box img {
+            max-width: 100%;
+            height: auto;
+            margin-bottom: 10px;
+        }
+
+        .button-box a {
+            display: block;
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+            text-decoration: none;
+            margin-top: 10px;
+            border-radius: 5px;
+        }
+
+        .button-box a:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+<!-- Navbar -->
+<nav>
+    <a href="/menu.html">Inicio</a>
+    <a href="/maintenance-doctores/start">Doctores</a>
+    <a href="/maintenance-pacientes/start">Pacientes</a>
+    <a href="/maintenance-citas/start">Citas</a>
+    <a href="/maintenance-medicamentos/start">Medicamentos</a>
+</nav>
+
+
+<div class = "container" >
+
+    <div class="mt-3 mb-3">
+        <h3>Mantenimiento de Citas</h3>
+    </div>
+
+    <div class="mb-3">
+        <a href="/maintenance-citas/register" class="btn btn-primary">Nueva Cita</a>
+    </div>
+
+    <table class="table table-bordered border-primary">
+        <tr>
+            <th class="table-dark">Codigo</th>
+            <th class="table-dark">Paciente</th>
+            <th class="table-dark">Doctor</th>
+            <th class="table-dark">Fecha</th>
+            <th class="table-dark">Motivo</th>
+            <th class="table-dark">Estado</th>
+            <th class="table-dark">Detalles</th>
+            <th class="table-dark">Actualizar</th>
+            <th class="table-dark">Eliminar</th>
+        </tr>
+        <tr th:each="cita : ${citas}">
+            <td th:text="${cita.idCita()}"></td>
+            <td th:text="${cita.paciente()}"></td>
+            <td th:text="${cita.doctor()}"></td>
+            <td th:text="${cita.fecha()}"></td>
+            <td th:text="${cita.motivo()}"></td>
+            <td th:text="${cita.estado()}"></td>
+            <td><button th:onclick="|window.location.href='@{/maintenance-citas/detail/{id}(id=${cita.idCita()})}'|"
+                        style="background-color: #4CAF50; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">
+                Detalles</button></td>
+            <td><button th:onclick="|window.location.href='@{/maintenance-citas/update/{id}(id=${cita.idCita()})}'|"
+                        style="background-color: #007bff; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">
+                Actualizar</button></td>
+            <td>
+                <form th:action="@{/maintenance-citas/delete/{id}(id=${cita.idCita()})}" method="post" th:id="'deleteForm-' + ${cita.idCita()}" style="display:inline;">
+                    <button type="button" th:onclick="'deleteCita(' + ${cita.idCita()} + ')'" class="btn btn-danger">Eliminar</button>
+                </form>
+            </td>
+        </tr>
+    </table>
+
+    <script>
+        function deleteCita(id) {
+            if (confirm("¿Estás seguro de que deseas eliminar esta cita?")) {
+                const url = `/maintenance-citas/delete/${id}`;
+
+                fetch(url, {
+                    method: 'DELETE',
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            window.location.href = "/maintenance-citas/start";
+                        } else {
+                            alert("Error al eliminar la cita.");
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert("Hubo un error al intentar eliminar la cita.");
+                    });
+            }
+        }
+    </script>
+</div>
+
+</body>
+
+</html>
